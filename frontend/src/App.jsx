@@ -1,10 +1,9 @@
 
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import "./App.css";
-
-
+import "./AudioPlayer.css";
 
 const books = [
 
@@ -22,25 +21,112 @@ const books = [
 
 ];
 
+const tracks = [
 
+  {
+
+    id: 1,
+
+    title: "Moves",
+
+    artist: "Shubh",
+
+    genre: "Punjabi",
+
+    duration: "2:40",
+
+    cover: "/covers/moves.png",
+
+    audioUrl: "/audio/moves.mp3",
+
+  },
+
+  {
+
+    id: 2,
+
+    title: "Mere Khwabon Mein",
+
+    artist: "Lata Mangeshkar",
+
+    genre: "Bollywood",
+
+    duration: "4:17",
+
+    cover: "/covers/mere-khwabon-mein.png",
+
+    audioUrl: "/audio/mere-khwabon-mein.mp3",
+
+  },
+
+  {
+
+    id: 3,
+
+    title: "Champ",
+
+    artist: "Vikram Sarkar & Thoughtt",
+
+    genre: "Punjabi",
+
+    duration: "2:38",
+
+    cover: "/covers/champ.png",
+
+    audioUrl: "/audio/champ.mp3",
+
+  },
+
+  {
+
+    id: 4,
+
+    title: "Legacy",
+
+    artist: "Vikram Sarkar, Billa Sonipat Ala & Thoughtt",
+
+    genre: "Punjabi",
+
+    duration: "2:49",
+
+    cover: "/covers/legacy.png",
+
+    audioUrl: "/audio/legacy.mp3",
+
+  },
+
+];
 
 const navItems = [
 
   ["⌂", "Home"],
 
-  ["▤", "Library"],
+  ["♫", "Music"],
+
+  ["▤", "Audiobooks"],
 
   ["⌕", "Search"],
+
+  ["♡", "My Library"],
 
   ["♙", "Profile"],
 
 ];
 
-
-
 function App() {
 
-  const [active, setActive] = useState("Home");
+  const [active, setActive] = useState("Music");
+
+  const [currentTrack, setCurrentTrack] = useState(tracks[0]);
+
+const [musicPlaying, setMusicPlaying] = useState(false);
+const [playerExpanded, setPlayerExpanded] = useState(false);
+
+const [currentTime, setCurrentTime] = useState(0);
+
+const [duration, setDuration] = useState(0);
+
+const audioRef = useRef(null);
 
   const [query, setQuery] = useState("");
 
@@ -49,8 +135,6 @@ function App() {
   const [playing, setPlaying] = useState(false);
 
   const [authMode, setAuthMode] = useState("welcome");
-
-
 
   const filteredBooks = books.filter((book) =>
 
@@ -62,15 +146,103 @@ function App() {
 
   );
 
-
-
   function openAuth(mode) {
 
     setAuthMode(mode);
 
   }
 
+function playTrack(track) {
 
+  if (currentTrack.id === track.id) {
+
+    setMusicPlaying((playing) => !playing);
+
+    return;
+
+  }
+
+  setCurrentTrack(track);
+
+  setCurrentTime(0);
+
+  setMusicPlaying(true);
+
+}
+
+function playNextTrack() {
+
+  const currentIndex = tracks.findIndex(
+
+    (track) => track.id === currentTrack.id
+
+  );
+
+  const nextIndex = (currentIndex + 1) % tracks.length;
+
+  setCurrentTrack(tracks[nextIndex]);
+
+  setCurrentTime(0);
+
+  setMusicPlaying(true);
+
+}
+
+function playPreviousTrack() {
+
+  const currentIndex = tracks.findIndex(
+
+    (track) => track.id === currentTrack.id
+
+  );
+
+  const previousIndex =
+
+    (currentIndex - 1 + tracks.length) % tracks.length;
+
+  setCurrentTrack(tracks[previousIndex]);
+
+  setCurrentTime(0);
+
+  setMusicPlaying(true);
+
+}
+
+useEffect(() => {
+
+  const audio = audioRef.current;
+
+  if (!audio) return;
+
+  if (musicPlaying) {
+
+    audio.play().catch((error) => {
+
+      console.error("Audio playback failed:", error);
+
+      setMusicPlaying(false);
+
+    });
+
+  } else {
+
+    audio.pause();
+
+  }
+
+}, [currentTrack, musicPlaying]);
+
+function formatTime(seconds) {
+
+  if (!Number.isFinite(seconds)) return "0:00";
+
+  const minutes = Math.floor(seconds / 60);
+
+  const remainingSeconds = Math.floor(seconds % 60);
+
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+
+}
 
   return (
 
@@ -86,11 +258,7 @@ function App() {
 
         </div>
 
-
-
         <p className="side-label">YOUR SPACE</p>
-
-
 
         {navItems.map(([icon, label]) => (
 
@@ -111,8 +279,6 @@ function App() {
           </button>
 
         ))}
-
-
 
         <div className="sidebar-bottom">
 
@@ -158,8 +324,6 @@ function App() {
 
       </aside>
 
-
-
       <main className="main-content">
 
         <header className="topbar">
@@ -179,8 +343,6 @@ function App() {
           </button>
 
         </header>
-
-
 
         <div className="search-wrap">
 
@@ -202,173 +364,358 @@ function App() {
 
         </div>
 
-
-
         {active === "Home" && (
 
-          <>
+  <section className="hero">
 
-            <section className="hero">
+    <div className="hero-copy">
 
-              <div className="hero-copy">
+      <span className="pill">WELCOME TO AUDIOVERSE</span>
 
-                <span className="pill">A WORLD OF STORIES</span>
+      <h2>
 
-                <h2>
+        Your music.
 
-                  Make every<br />
+        <br />
 
-                  moment <span className="gold">meaningful.</span>
+        Your <span className="gold">universe.</span>
 
-                </h2>
+      </h2>
 
-                <p>
+      <p>
 
-                  Listen, learn, and discover your next favourite story —
+        Discover your next favourite song, explore new artists,
 
-                  wherever life takes you.
+        and enjoy the sounds that move you.
 
-                </p>
+      </p>
 
-                <button
+      <button
 
-                  className="primary-button"
+        className="primary-button"
 
-                  onClick={() => setActive("Search")}
+        onClick={() => setActive("Music")}
 
-                >
+      >
 
-                  Explore audiobooks ↗
+        Explore music ↗
 
-                </button>
+      </button>
 
-              </div>
+      <button
 
+        className="secondary-button"
 
+        onClick={() => setActive("Audiobooks")}
 
-              <div className="hero-art">
+      >
 
-                <div className="sound-ring">♫</div>
+        Explore audiobooks
 
-                <div className="sound-bars">
+      </button>
 
-                  {[28, 48, 70, 42, 86, 58, 34, 68, 45, 25].map((height, i) => (
+    </div>
 
-                    <i key={i} style={{ height }} />
+    <div className="hero-art">
 
-                  ))}
+      <div className="sound-ring">♫</div>
 
-                </div>
+      <div className="sound-bars">
 
-                <span>LISTEN BEYOND</span>
+        {[28, 48, 70, 42, 86, 58, 34, 68, 45, 25].map(
 
-              </div>
+          (height, i) => (
 
-            </section>
+            <i key={i} style={{ height }} />
 
-
-
-            <div className="section-heading">
-
-              <div>
-
-                <p className="eyebrow">HANDPICKED FOR YOU</p>
-
-                <h2>Popular audiobooks</h2>
-
-              </div>
-
-              <button className="text-button" onClick={() => setActive("Search")}>
-
-                See all ↗
-
-              </button>
-
-            </div>
-
-
-
-            <section className="book-grid">
-
-              {filteredBooks.map((book) => (
-
-                <BookCard
-
-                  key={book.title}
-
-                  book={book}
-
-                  onClick={() => {
-
-                    setSelected(book);
-
-                    setPlaying(false);
-
-                  }}
-
-                />
-
-              ))}
-
-            </section>
-
-
-
-            <div className="section-heading">
-
-              <div>
-
-                <p className="eyebrow">FIND YOUR INTEREST</p>
-
-                <h2>Explore categories</h2>
-
-              </div>
-
-            </div>
-
-
-
-            <section className="category-grid">
-
-              {["Self Help", "Business", "Fiction", "Biography"].map(
-
-                (category, i) => (
-
-                  <button
-
-                    key={category}
-
-                    className={`category category-${i}`}
-
-                    onClick={() => {
-
-                      setQuery(category);
-
-                      setActive("Search");
-
-                    }}
-
-                  >
-
-                    <span>{["✦", "▥", "▤", "♙"][i]}</span>
-
-                    {category}
-
-                    <span className="category-arrow">↗</span>
-
-                  </button>
-
-                )
-
-              )}
-
-            </section>
-
-          </>
+          )
 
         )}
 
+      </div>
 
+      <span>LISTEN BEYOND</span>
+
+    </div>
+
+  </section>
+
+)}
+
+{active === "Music" && (
+
+  <>
+
+    <section className="hero">
+
+      <div className="hero-copy">
+
+        <span className="pill">YOUR DAILY SOUNDTRACK</span>
+
+        <h2>
+
+          Feel every
+
+          <br />
+
+          <span className="gold">beat.</span>
+
+        </h2>
+
+        <p>
+
+          Discover new sounds, revisit your favourites,
+
+          and find the music for every moment.
+
+        </p>
+
+        <button
+
+          className="primary-button"
+
+          onClick={() => setActive("Search")}
+
+        >
+
+          Discover music ↗
+
+        </button>
+
+      </div>
+
+      <div className="hero-art">
+
+        <div className="sound-ring">♫</div>
+
+        <div className="sound-bars">
+
+          {[28, 48, 70, 42, 86, 58, 34, 68, 45, 25].map(
+
+            (height, i) => (
+
+              <i key={i} style={{ height }} />
+
+            )
+
+          )}
+
+        </div>
+
+        <span>YOUR SOUND. YOUR WORLD.</span>
+
+      </div>
+
+    </section>
+
+    <div className="section-heading">
+
+      <div>
+
+        <p className="eyebrow">EXPLORE YOUR TASTE</p>
+
+        <h2>Browse genres</h2>
+
+      </div>
+
+    </div>
+
+    <section className="category-grid">
+
+      {["Pop", "Rock", "Lo-fi", "Classical"].map(
+
+        (genre, i) => (
+
+          <button
+
+            key={genre}
+
+            className={`category category-${i}`}
+
+            onClick={() => {
+
+              setQuery(genre);
+
+              setActive("Search");
+
+            }}
+
+          >
+
+            <span>{["♫", "♬", "☾", "♪"][i]}</span>
+
+            {genre}
+
+            <span className="category-arrow">↗</span>
+
+          </button>
+
+        )
+
+      )}
+
+    </section>
+
+    <div className="section-heading">
+
+  <div>
+
+    <p className="eyebrow">YOUR SOUNDTRACK</p>
+
+    <h2>Popular tracks</h2>
+
+  </div>
+
+</div>
+
+<section className="music-track-list">
+
+  {tracks.map((track) => (
+
+    <div className="music-track" key={track.id}>
+
+      <img
+
+        className="music-track-cover"
+
+        src={track.cover}
+
+        alt={`${track.title} cover`}
+
+      />
+
+      <div className="music-track-info">
+
+        <h3>{track.title}</h3>
+
+        <p>
+
+          {track.artist} · {track.duration}
+
+        </p>
+
+        <span>{track.genre}</span>
+
+      </div>
+
+      <button
+
+        type="button"
+
+        className="music-play-button"
+
+        onClick={() => playTrack(track)}
+        aria-label={currentTrack.id === track.id && musicPlaying ? `Pause ${track.title}` : `Play ${track.title}`}
+      >
+        {currentTrack.id === track.id && musicPlaying ? "Ⅱ" : "▶"}
+
+      </button>
+
+    </div>
+
+  ))}
+
+</section>
+
+    <div className="section-heading">
+
+      <div>
+
+        <p className="eyebrow">MORE TO EXPLORE</p>
+
+        <h2>Love listening to stories?</h2>
+
+      </div>
+
+    </div>
+
+    <section className="hero">
+
+      <div className="hero-copy">
+
+        <span className="pill">DISCOVER AUDIOBOOKS</span>
+
+        <p>
+
+          Take a break from music and dive into stories,
+
+          ideas, and new worlds.
+
+        </p>
+
+        <button
+
+          className="primary-button"
+
+          onClick={() => setActive("Audiobooks")}
+
+        >
+
+          Explore audiobooks ↗
+
+        </button>
+
+      </div>
+
+    </section>
+
+  </>
+
+)}
+
+{active === "Audiobooks" && (
+
+  <>
+
+    <div className="section-heading">
+
+      <div>
+
+        <p className="eyebrow">YOUR NEXT LISTEN</p>
+
+        <h2>Explore audiobooks</h2>
+
+      </div>
+
+    </div>
+
+    <section className="book-grid">
+
+      {filteredBooks.map((book) => (
+
+        <BookCard
+
+          key={book.title}
+
+          book={book}
+
+          onClick={() => {
+
+            setSelected(book);
+
+            setPlaying(false);
+
+          }}
+
+        />
+
+      ))}
+
+    </section>
+
+    {filteredBooks.length === 0 && (
+
+      <p className="empty-state">
+
+        No audiobooks found. Try another search.
+
+      </p>
+
+    )}
+
+  </>
+
+)}
 
         {active === "Search" && (
 
@@ -386,8 +733,6 @@ function App() {
 
             </div>
 
-
-
             <section className="book-grid">
 
               {filteredBooks.map((book) => (
@@ -412,8 +757,6 @@ function App() {
 
             </section>
 
-
-
             {filteredBooks.length === 0 && (
 
               <p className="empty-state">
@@ -428,9 +771,7 @@ function App() {
 
         )}
 
-
-
-        {active === "Library" && (
+        {active === "My Library" && (
 
           <>
 
@@ -445,8 +786,6 @@ function App() {
               </div>
 
             </div>
-
-
 
             <section className="book-grid">
 
@@ -472,8 +811,6 @@ function App() {
 
             </section>
 
-
-
             <p className="muted">
 
               Sample library content. Saved books and listening progress
@@ -485,8 +822,6 @@ function App() {
           </>
 
         )}
-
-
 
         {active === "Profile" && (
 
@@ -534,7 +869,176 @@ function App() {
 
       </main>
 
+      {/* Audio stays mounted across navigation so track playback works on every page. */}
+      <audio
+        ref={audioRef}
+        src={currentTrack.audioUrl}
+        preload="metadata"
+        onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+        onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
+        onEnded={playNextTrack}
+        onError={() => {
+          setMusicPlaying(false);
+          console.error("Audio failed to load:", currentTrack.audioUrl);
+        }}
+      />
 
+      {/* YouTube Music-style mini player: tap the bar to expand it. */}
+      <section
+        className="av-mini-player"
+        aria-label="Now playing"
+        onClick={() => setPlayerExpanded(true)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setPlayerExpanded(true);
+          }
+        }}
+      >
+        <div className="av-mini-progress-track">
+          <div
+            className="av-mini-progress-fill"
+            style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+          />
+        </div>
+        <img className="av-mini-cover" src={currentTrack.cover} alt={`${currentTrack.title} cover`} />
+        <div className="av-mini-info">
+          <strong>{currentTrack.title}</strong>
+          <span>{currentTrack.artist}</span>
+        </div>
+        <button
+          type="button"
+          className="av-mini-control"
+          aria-label={musicPlaying ? "Pause" : "Play"}
+          onClick={(event) => {
+            event.stopPropagation();
+            setMusicPlaying((value) => !value);
+          }}
+        >
+          {musicPlaying ? "Ⅱ" : "▶"}
+        </button>
+        <button
+          type="button"
+          className="av-mini-control av-mini-next"
+          aria-label="Next track"
+          onClick={(event) => {
+            event.stopPropagation();
+            playNextTrack();
+          }}
+        >
+          ▶|
+        </button>
+        <button
+          type="button"
+          className="av-mini-expand"
+          aria-label="Expand player"
+          onClick={(event) => {
+            event.stopPropagation();
+            setPlayerExpanded(true);
+          }}
+        >
+          ⌃
+        </button>
+      </section>
+
+      {playerExpanded && (
+        <div className="av-player-overlay" role="dialog" aria-modal="true" aria-label="Now playing">
+          <div className="av-expanded-player">
+            <header className="av-player-header">
+              <button
+                type="button"
+                className="av-player-close"
+                onClick={() => setPlayerExpanded(false)}
+                aria-label="Minimize player"
+              >
+                ⌄
+              </button>
+              <div className="av-player-header-copy">
+                <span>NOW PLAYING</span>
+                <strong>AudioVerse</strong>
+              </div>
+              <button
+                type="button"
+                className="av-player-more"
+                onClick={() => setPlayerExpanded(false)}
+                aria-label="Close player"
+              >
+                ⋯
+              </button>
+            </header>
+
+            <div className="av-expanded-art-wrap">
+              <img className="av-expanded-cover" src={currentTrack.cover} alt={`${currentTrack.title} cover`} />
+            </div>
+
+            <div className="av-expanded-track-details">
+              <div className="av-expanded-track-copy">
+                <h2>{currentTrack.title}</h2>
+                <p>{currentTrack.artist}</p>
+              </div>
+              <span className="av-track-like" aria-label="Like track">♡</span>
+            </div>
+
+            <div className="av-expanded-seek">
+              <input
+                type="range"
+                min="0"
+                max={duration || 0}
+                value={Math.min(currentTime, duration || 0)}
+                onChange={(event) => {
+                  const nextTime = Number(event.target.value);
+                  if (audioRef.current) audioRef.current.currentTime = nextTime;
+                  setCurrentTime(nextTime);
+                }}
+                aria-label="Seek through track"
+                style={{ "--av-seek-progress": `${duration ? (currentTime / duration) * 100 : 0}%` }}
+              />
+              <div className="av-time-labels">
+                <span>{formatTime(currentTime)}</span>
+                <span>-{formatTime(Math.max(0, duration - currentTime))}</span>
+              </div>
+            </div>
+
+            <div className="av-expanded-controls">
+              <button type="button" aria-label="Previous track" className="av-skip-control" onClick={playPreviousTrack}>|◀</button>
+              <button
+                type="button"
+                aria-label={musicPlaying ? "Pause music" : "Play music"}
+                className="av-main-play-control"
+                onClick={() => setMusicPlaying((value) => !value)}
+              >
+                {musicPlaying ? "Ⅱ" : "▶"}
+              </button>
+              <button type="button" aria-label="Next track" className="av-skip-control" onClick={playNextTrack}>▶|</button>
+            </div>
+
+            <div className="av-up-next">
+              <div className="av-up-next-heading">
+                <strong>Up next</strong>
+                <span>{tracks.length} tracks</span>
+              </div>
+              {tracks.map((track) => (
+                <button
+                  type="button"
+                  key={track.id}
+                  className={`av-queue-track ${currentTrack.id === track.id ? "is-current" : ""}`}
+                  onClick={() => playTrack(track)}
+                >
+                  <img src={track.cover} alt="" />
+                  <span className="av-queue-copy">
+                    <strong>{track.title}</strong>
+                    <small>{track.artist}</small>
+                  </span>
+                  <span className="av-queue-duration">{track.duration}</span>
+                  {currentTrack.id === track.id && <span className="av-queue-playing">♫</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="mobile-nav">
 
@@ -559,8 +1063,6 @@ function App() {
         ))}
 
       </footer>
-
-
 
       {selected && (
 
@@ -626,8 +1128,6 @@ function App() {
 
       )}
 
-
-
       {authMode !== "welcome" && (
 
         <AuthScreen
@@ -637,8 +1137,11 @@ function App() {
           setMode={setAuthMode}
 
         onClose={() => {
+
   setAuthMode("welcome");
+
   setActive("Home");
+
 }}
 
         />
@@ -650,8 +1153,6 @@ function App() {
   );
 
 }
-
-
 
 function BookCover({ book, large = false }) {
 
@@ -685,8 +1186,6 @@ function BookCover({ book, large = false }) {
 
 }
 
-
-
 function BookCard({ book, onClick }) {
 
   return (
@@ -719,8 +1218,6 @@ function BookCard({ book, onClick }) {
 
 }
 
-
-
 function AuthScreen({ mode, setMode, onClose }) {
 
   const [name, setName] = useState("");
@@ -735,11 +1232,7 @@ function AuthScreen({ mode, setMode, onClose }) {
 
   const [messageType, setMessageType] = useState("info");
 
-
-
   const isSignup = mode === "signup";
-
-
 
   function switchMode(nextMode) {
 
@@ -751,131 +1244,214 @@ function AuthScreen({ mode, setMode, onClose }) {
 
   }
 
-
-
   async function handleSubmit(e) {
+
     e.preventDefault();
+
     setMessage("");
+
     setMessageType("info");
 
     if (isSignup && name.trim().length < 2) {
+
       setMessageType("error");
+
       setMessage("Please enter your full name.");
+
       return;
+
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+
       setMessageType("error");
+
       setMessage("Please enter a valid email address.");
+
       return;
+
     }
 
     if (password.length < 8) {
+
       setMessageType("error");
+
       setMessage("Password must contain at least 8 characters.");
+
       return;
+
     }
 
     if (isSignup && password.length > 72) {
+
       setMessageType("error");
+
       setMessage("Password must be no longer than 72 characters.");
+
       return;
+
     }
 
     if (isSignup && password !== confirmPassword) {
+
       setMessageType("error");
+
       setMessage("Passwords do not match.");
+
       return;
+
     }
 
     if (!isSignup) {
+
   setMessageType("info");
+
   setMessage("Signing in...");
 
   try {
+
     const response = await fetch(
-      "http://localhost:8080/api/users/login",
+
+      "http\://localhost:8080/api/users/login",
+
       {
+
         method: "POST",
+
         headers: {
+
           "Content-Type": "application/json",
+
         },
+
         body: JSON.stringify({
+
           email: email.trim().toLowerCase(),
+
           password: password,
+
         }),
+
       }
+
     );
 
     const result = await response.json();
 
     if (!response.ok) {
+
       setMessageType("error");
+
       setMessage("Invalid email or password.");
+
       return;
+
     }
 
    setMessageType("success");
+
 setMessage(`Welcome back, ${result.name}!`);
 
 setTimeout(() => {
+
   onClose();
+
 }, 1000);
 
 console.log("Logged-in user:", result);
 
 // TODO: Navigate to the AudioVerse home screen here.
+
   } catch (error) {
+
     setMessageType("error");
+
     setMessage(
+
       "Cannot connect to the server. Check that your backend is running."
+
     );
+
   }
 
   return;
+
 }
 
     setMessageType("info");
+
     setMessage("Creating your account...");
 
     try {
-      const response = await fetch("http://localhost:8080/api/users", {
+
+      const response = await fetch("http\://localhost:8080/api/users", {
+
         method: "POST",
+
         headers: {
+
           "Content-Type": "application/json",
+
         },
+
         body: JSON.stringify({
+
           name: name.trim(),
+
           email: normalizedEmail,
+
           password,
+
         }),
+
       });
 
       const result = await response.text();
 
       if (!response.ok) {
+
         if (response.status === 409) {
+
           throw new Error("This email is already registered. Try signing in instead.");
+
         }
+
         if (response.status === 400) {
+
           throw new Error(result || "Please check your name, email, and password.");
+
         }
+
         throw new Error(result || `Account creation failed (HTTP ${response.status}).`);
+
       }
 
       setMessageType("success");
+
       setMessage("Account created successfully! You can now sign in.");
+
       setPassword("");
+
       setConfirmPassword("");
+
     } catch (error) {
+
       setMessageType("error");
+
       if (error instanceof TypeError) {
+
         setMessage("Cannot connect to the server. Check that the backend is running and allows requests from the frontend.");
+
       } else {
+
         setMessage(error.message || "Something went wrong. Please try again.");
+
       }
+
     }
+
   }
 
   return (
@@ -890,11 +1466,7 @@ console.log("Logged-in user:", result);
 
         </button>
 
-
-
         <div className="auth-logo">♫</div>
-
-
 
         <h2>{isSignup ? "Create your account" : "Welcome back"}</h2>
 
@@ -907,8 +1479,6 @@ console.log("Logged-in user:", result);
             : "Sign in to continue your listening journey."}
 
         </p>
-
-
 
         <form onSubmit={handleSubmit} className="auth-form">
 
@@ -936,8 +1506,6 @@ console.log("Logged-in user:", result);
 
           )}
 
-
-
           <label>
 
             Email address
@@ -952,15 +1520,13 @@ console.log("Logged-in user:", result);
 
               autoComplete="email"
 
-              placeholder="you@example.com"
+              placeholder="you\@example.com"
 
               required
 
             />
 
           </label>
-
-
 
           <label>
 
@@ -985,8 +1551,6 @@ console.log("Logged-in user:", result);
             />
 
           </label>
-
-
 
           {isSignup && (
 
@@ -1014,8 +1578,6 @@ console.log("Logged-in user:", result);
 
           )}
 
-
-
           {message && message !== "NO_ACCOUNT" && (
 
             <p className="auth-message" role="status">
@@ -1025,8 +1587,6 @@ console.log("Logged-in user:", result);
             </p>
 
           )}
-
-
 
           {message === "NO_ACCOUNT" && (
 
@@ -1052,8 +1612,6 @@ console.log("Logged-in user:", result);
 
           )}
 
-
-
           <button className="primary-button full" type="submit">
 
             {isSignup ? "Create account →" : "Sign in →"}
@@ -1061,8 +1619,6 @@ console.log("Logged-in user:", result);
           </button>
 
         </form>
-
-
 
         <p className="auth-switch">
 
@@ -1105,7 +1661,5 @@ console.log("Logged-in user:", result);
   );
 
 }
-
-
 
 export default App;
