@@ -68,7 +68,7 @@ const tracks = [
 
     artist: "Vikram Sarkar & Thoughtt",
 
-    genre: "Haryanvi",
+    genre: "Punjabi",
 
     duration: "2:38",
 
@@ -86,7 +86,7 @@ const tracks = [
 
     artist: "Vikram Sarkar, Billa Sonipat Ala & Thoughtt",
 
-    genre: "Haryanvi",
+    genre: "Punjabi",
 
     duration: "2:49",
 
@@ -96,6 +96,52 @@ const tracks = [
 
   },
 
+
+  // Catalogue-only entries: metadata is present, but audio is intentionally not connected yet.
+  { id: 5, title: "52 Gaj Ka Daman", artist: "Renuka Panwar", genre: "Haryanvi", duration: "—", cover: null, audioUrl: null },
+  { id: 6, title: "Chatak Matak", artist: "Renuka Panwar", genre: "Haryanvi", duration: "—", cover: null, audioUrl: null },
+  { id: 7, title: "Moto", artist: "Diler Kharkiya", genre: "Haryanvi", duration: "—", cover: null, audioUrl: null },
+  { id: 8, title: "Gypsy", artist: "GD Kaur", genre: "Haryanvi", duration: "—", cover: null, audioUrl: null },
+  { id: 9, title: "Jale 2", artist: "Shine", genre: "Haryanvi", duration: "—", cover: null, audioUrl: null },
+  { id: 10, title: "Teri Aakhya Ka Yo Kajal", artist: "DC Madana", genre: "Haryanvi", duration: "—", cover: null, audioUrl: null },
+  { id: 11, title: "Excuses", artist: "AP Dhillon, Gurinder Gill", genre: "Punjabi", duration: "—", cover: null, audioUrl: null },
+  { id: 12, title: "Insane", artist: "AP Dhillon", genre: "Punjabi", duration: "—", cover: null, audioUrl: null },
+  { id: 13, title: "With You", artist: "AP Dhillon", genre: "Punjabi", duration: "—", cover: null, audioUrl: null },
+  { id: 14, title: "Lover", artist: "Diljit Dosanjh", genre: "Punjabi", duration: "—", cover: null, audioUrl: null },
+  { id: 15, title: "Born to Shine", artist: "Diljit Dosanjh", genre: "Punjabi", duration: "—", cover: null, audioUrl: null },
+  { id: 16, title: "Softly", artist: "Karan Aujla", genre: "Punjabi", duration: "—", cover: null, audioUrl: null },
+  { id: 17, title: "Maan Meri Jaan", artist: "King", genre: "Hindi", duration: "—", cover: null, audioUrl: null },
+  { id: 18, title: "Kesariya", artist: "Arijit Singh", genre: "Bollywood", duration: "—", cover: null, audioUrl: null },
+  { id: 19, title: "Tum Hi Ho", artist: "Arijit Singh", genre: "Bollywood", duration: "—", cover: null, audioUrl: null },
+  { id: 20, title: "Channa Mereya", artist: "Arijit Singh", genre: "Bollywood", duration: "—", cover: null, audioUrl: null },
+  { id: 21, title: "Apna Bana Le", artist: "Arijit Singh", genre: "Bollywood", duration: "—", cover: null, audioUrl: null },
+  { id: 22, title: "Tere Vaaste", artist: "Varun Jain, Sachin-Jigar", genre: "Bollywood", duration: "—", cover: null, audioUrl: null },
+  { id: 23, title: "Heeriye", artist: "Jasleen Royal, Arijit Singh", genre: "Hindi Pop", duration: "—", cover: null, audioUrl: null },
+  { id: 24, title: "O Maahi", artist: "Arijit Singh", genre: "Bollywood", duration: "—", cover: null, audioUrl: null },
+  { id: 25, title: "Ilahi", artist: "Arijit Singh", genre: "Bollywood", duration: "—", cover: null, audioUrl: null },
+  { id: 26, title: "Agar Tum Saath Ho", artist: "Alka Yagnik, Arijit Singh", genre: "Bollywood", duration: "—", cover: null, audioUrl: null },
+  { id: 27, title: "Apna Time Aayega", artist: "Ranveer Singh", genre: "Hip-hop", duration: "—", cover: null, audioUrl: null },
+  { id: 28, title: "Still Rollin", artist: "Shubh", genre: "Hip-hop", duration: "—", cover: null, audioUrl: null },
+  { id: 29, title: "Brown Munde", artist: "AP Dhillon, Gurinder Gill", genre: "Hip-hop", duration: "—", cover: null, audioUrl: null },
+  { id: 30, title: "Blinding Lights", artist: "The Weeknd", genre: "Pop", duration: "—", cover: null, audioUrl: null },
+  { id: 31, title: "Shape of You", artist: "Ed Sheeran", genre: "Pop", duration: "—", cover: null, audioUrl: null },
+  { id: 32, title: "Levitating", artist: "Dua Lipa", genre: "Pop", duration: "—", cover: null, audioUrl: null },
+  { id: 33, title: "Perfect", artist: "Ed Sheeran", genre: "Pop", duration: "—", cover: null, audioUrl: null },
+  { id: 34, title: "Believer", artist: "Imagine Dragons", genre: "Rock", duration: "—", cover: null, audioUrl: null },
+  { id: 35, title: "Numb", artist: "Linkin Park", genre: "Rock", duration: "—", cover: null, audioUrl: null },
+  { id: 36, title: "Interstellar Main Theme", artist: "Hans Zimmer", genre: "Instrumental", duration: "—", cover: null, audioUrl: null },
+  { id: 37, title: "River Flows in You", artist: "Yiruma", genre: "Classical", duration: "—", cover: null, audioUrl: null },
+  { id: 38, title: "Weightless", artist: "Marconi Union", genre: "Lo-fi", duration: "—", cover: null, audioUrl: null },
+  { id: 39, title: "Experience", artist: "Ludovico Einaudi", genre: "Classical", duration: "—", cover: null, audioUrl: null },
+  { id: 40, title: "Kun Faya Kun", artist: "A.R. Rahman, Javed Ali, Mohit Chauhan", genre: "Devotional", duration: "—", cover: null, audioUrl: null },
+  { id: 41, title: "Shri Krishna Govind Hare Murari", artist: "Jubin Nautiyal", genre: "Devotional", duration: "—", cover: null, audioUrl: null },
+  { id: 42, title: "Chaap Tilak", artist: "Abida Parveen, Rahat Fateh Ali Khan", genre: "Sufi", duration: "—", cover: null, audioUrl: null },
+  { id: 43, title: "Afreen Afreen", artist: "Rahat Fateh Ali Khan, Momina Mustehsan", genre: "Ghazal", duration: "—", cover: null, audioUrl: null },
+  { id: 44, title: "Pasoori", artist: "Ali Sethi, Shae Gill", genre: "Indie", duration: "—", cover: null, audioUrl: null },
+  { id: 45, title: "Kasoor", artist: "Prateek Kuhad", genre: "Indie", duration: "—", cover: null, audioUrl: null },
+  { id: 46, title: "cold/mess", artist: "Prateek Kuhad", genre: "Indie", duration: "—", cover: null, audioUrl: null },
+  { id: 47, title: "Night Changes", artist: "One Direction", genre: "Pop", duration: "—", cover: null, audioUrl: null },
+  { id: 48, title: "Faded", artist: "Alan Walker", genre: "EDM", duration: "—", cover: null, audioUrl: null },
 ];
 
 const navItems = [
@@ -155,9 +201,9 @@ const audioRef = useRef(null);
     }
   }, [currentUser]);
 
-  const genres = ["All", "Haryanvi", "Bollywood", "Punjabi", "Pop", "Rock", "Lo-fi", "Classical"];
+  const genres = ["All", "Haryanvi", "Punjabi", "Bollywood", "Hindi", "Hindi Pop", "Indie", "Pop", "Hip-hop", "Rock", "EDM", "Lo-fi", "Classical", "Instrumental", "Devotional", "Sufi", "Ghazal"];
   const filteredTracks = tracks.filter((track) => {
-    const matchesGenre = selectedGenre === "All" || track.genre.toLowerCase() === selectedGenre.toLowerCase();
+    const matchesGenre = selectedGenre === "All" || track.genre.toLowerCase() === selectedGenre.toLowerCase() || (selectedGenre === "Hindi" && ["hindi", "bollywood", "hindi pop"].includes(track.genre.toLowerCase()));
     const matchesQuery = `${track.title} ${track.artist} ${track.genre}`
       .toLowerCase()
       .includes(query.trim().toLowerCase());
@@ -189,6 +235,11 @@ const audioRef = useRef(null);
 
 function playTrack(track) {
 
+  if (!track.audioUrl) {
+    window.alert(`“${track.title}” is in the catalogue. Audio will be connected in the next phase.`);
+    return;
+  }
+
   if (currentTrack.id === track.id) {
 
     setMusicPlaying((playing) => !playing);
@@ -207,15 +258,16 @@ function playTrack(track) {
 
 function playNextTrack() {
 
-  const currentIndex = tracks.findIndex(
+  const playableTracks = tracks.filter((track) => track.audioUrl);
+  const currentIndex = playableTracks.findIndex(
 
     (track) => track.id === currentTrack.id
 
   );
 
-  const nextIndex = (currentIndex + 1) % tracks.length;
+  const nextIndex = (currentIndex + 1) % playableTracks.length;
 
-  setCurrentTrack(tracks[nextIndex]);
+  setCurrentTrack(playableTracks[nextIndex]);
 
   setCurrentTime(0);
 
@@ -225,7 +277,8 @@ function playNextTrack() {
 
 function playPreviousTrack() {
 
-  const currentIndex = tracks.findIndex(
+  const playableTracks = tracks.filter((track) => track.audioUrl);
+  const currentIndex = playableTracks.findIndex(
 
     (track) => track.id === currentTrack.id
 
@@ -233,9 +286,9 @@ function playPreviousTrack() {
 
   const previousIndex =
 
-    (currentIndex - 1 + tracks.length) % tracks.length;
+    (currentIndex - 1 + playableTracks.length) % playableTracks.length;
 
-  setCurrentTrack(tracks[previousIndex]);
+  setCurrentTrack(playableTracks[previousIndex]);
 
   setCurrentTime(0);
 
@@ -382,7 +435,7 @@ function formatTime(seconds) {
                 playTrack(track);
                 setQuery("");
               }}>
-                <img src={track.cover} alt="" />
+                {track.cover ? <img src={track.cover} alt="" /> : <span className="av-queue-placeholder">♫</span>}
                 <span><strong>{track.title}</strong><small>{track.artist} · {track.genre}</small></span>
                 <span className="suggestion-play">▶</span>
               </button>
@@ -572,15 +625,11 @@ function formatTime(seconds) {
 
     <div className="music-track" key={track.id}>
 
-      <img
-
-        className="music-track-cover"
-
-        src={track.cover}
-
-        alt={`${track.title} cover`}
-
-      />
+      {track.cover ? (
+        <img className="music-track-cover" src={track.cover} alt={`${track.title} cover`} />
+      ) : (
+        <div className="music-track-cover music-track-cover-placeholder" aria-label="Artwork not added yet">♫</div>
+      )}
 
       <div className="music-track-info">
 
@@ -603,12 +652,11 @@ function formatTime(seconds) {
         className="music-play-button"
 
         onClick={() => playTrack(track)}
-
-        aria-label={currentTrack.id === track.id && musicPlaying ? `Pause ${track.title}` : `Play ${track.title}`}
-
+        disabled={!track.audioUrl}
+        aria-label={!track.audioUrl ? `${track.title} audio not connected yet` : currentTrack.id === track.id && musicPlaying ? `Pause ${track.title}` : `Play ${track.title}`}
+        title={!track.audioUrl ? "Catalogue entry — audio will be added later" : "Play track"}
       >
-
-        {currentTrack.id === track.id && musicPlaying ? "Ⅱ" : "▶"}
+        {!track.audioUrl ? "＋" : currentTrack.id === track.id && musicPlaying ? "Ⅱ" : "▶"}
 
       </button>
 
@@ -740,9 +788,9 @@ function formatTime(seconds) {
             <section className="music-track-list">
               {tracks.filter((track) => `${track.title} ${track.artist} ${track.genre}`.toLowerCase().includes(query.trim().toLowerCase())).map((track) => (
                 <div className="music-track" key={track.id}>
-                  <img className="music-track-cover" src={track.cover} alt={`${track.title} cover`} />
+                  {track.cover ? <img className="music-track-cover" src={track.cover} alt={`${track.title} cover`} /> : <div className="music-track-cover music-track-cover-placeholder" aria-label="Artwork not added yet">♫</div>}
                   <div className="music-track-info"><h3>{track.title}</h3><p>{track.artist} · {track.duration}</p><span>{track.genre}</span></div>
-                  <button type="button" className="music-play-button" onClick={() => playTrack(track)} aria-label={`Play ${track.title}`}>{currentTrack.id === track.id && musicPlaying ? "Ⅱ" : "▶"}</button>
+                  <button type="button" className="music-play-button" onClick={() => playTrack(track)} disabled={!track.audioUrl} aria-label={!track.audioUrl ? `${track.title} audio not connected yet` : `Play ${track.title}`} title={!track.audioUrl ? "Catalogue entry — audio will be added later" : "Play track"}>{!track.audioUrl ? "＋" : currentTrack.id === track.id && musicPlaying ? "Ⅱ" : "▶"}</button>
                 </div>
               ))}
             </section>
@@ -1168,7 +1216,7 @@ function formatTime(seconds) {
 
                 >
 
-                  <img src={track.cover} alt="" />
+                  {track.cover ? <img src={track.cover} alt="" /> : <span className="av-queue-placeholder">♫</span>}
 
                   <span className="av-queue-copy">
 
@@ -1178,7 +1226,7 @@ function formatTime(seconds) {
 
                   </span>
 
-                  <span className="av-queue-duration">{track.duration}</span>
+                  <span className="av-queue-duration">{track.audioUrl ? track.duration : "Soon"}</span>
 
                   {currentTrack.id === track.id && <span className="av-queue-playing">♫</span>}
 
