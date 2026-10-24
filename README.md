@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AudioVerse — current project snapshot
 
 This is a reconstructed snapshot of the AudioVerse backend based on the code and configuration shared in our conversation. It is not a copy of your local folders, and it may not include any files or changes that were never shared here.
@@ -71,3 +72,6 @@ The endpoint stores a BCrypt password hash, not the raw password. Use a fresh em
 
 ## Security note
 Do not commit `.env` or real database credentials. This snapshot intentionally does not include your actual password.
+=======
+# Audioversee
+>>>>>>> 186bcc6 (Initial commit)
