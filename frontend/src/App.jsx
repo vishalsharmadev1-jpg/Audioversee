@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import "./App.css";
+
 import "./AudioPlayer.css";
 
 const books = [
@@ -67,7 +68,7 @@ const tracks = [
 
     artist: "Vikram Sarkar & Thoughtt",
 
-    genre: "Punjabi",
+    genre: "Haryanvi",
 
     duration: "2:38",
 
@@ -85,7 +86,7 @@ const tracks = [
 
     artist: "Vikram Sarkar, Billa Sonipat Ala & Thoughtt",
 
-    genre: "Punjabi",
+    genre: "Haryanvi",
 
     duration: "2:49",
 
@@ -120,6 +121,7 @@ function App() {
   const [currentTrack, setCurrentTrack] = useState(tracks[0]);
 
 const [musicPlaying, setMusicPlaying] = useState(false);
+
 const [playerExpanded, setPlayerExpanded] = useState(false);
 
 const [currentTime, setCurrentTime] = useState(0);
@@ -135,6 +137,39 @@ const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
 
   const [authMode, setAuthMode] = useState("welcome");
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem("audioverse_user");
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [selectedGenre, setSelectedGenre] = useState("All");
+
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem("audioverse_user", JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem("audioverse_user");
+    }
+  }, [currentUser]);
+
+  const genres = ["All", "Haryanvi", "Bollywood", "Punjabi", "Pop", "Rock", "Lo-fi", "Classical"];
+  const filteredTracks = tracks.filter((track) => {
+    const matchesGenre = selectedGenre === "All" || track.genre.toLowerCase() === selectedGenre.toLowerCase();
+    const matchesQuery = `${track.title} ${track.artist} ${track.genre}`
+      .toLowerCase()
+      .includes(query.trim().toLowerCase());
+    return matchesGenre && matchesQuery;
+  });
+  const suggestedTracks = query.trim()
+    ? tracks.filter((track) =>
+        `${track.title} ${track.artist} ${track.genre}`
+          .toLowerCase()
+          .includes(query.trim().toLowerCase())
+      ).slice(0, 5)
+    : [];
 
   const filteredBooks = books.filter((book) =>
 
@@ -281,45 +316,19 @@ function formatTime(seconds) {
         ))}
 
         <div className="sidebar-bottom">
-
-          <div className="avatar">V</div>
-
-          <div>
-
-            <strong>Welcome back</strong>
-
-            <p>Ready for a new story?</p>
-
-            <button
-
-              type="button"
-
-              className="auth-sidebar-link"
-
-              onClick={() => openAuth("login")}
-
-            >
-
-              Sign in
-
-            </button>
-
-            <button
-
-              type="button"
-
-              className="auth-sidebar-link"
-
-              onClick={() => openAuth("signup")}
-
-            >
-
-              Create account
-
-            </button>
-
+          <div className="avatar">{currentUser ? (currentUser.name || currentUser.email || "A").charAt(0).toUpperCase() : "V"}</div>
+          <div className="sidebar-user-info">
+            <strong>{currentUser ? currentUser.name || "AudioVerse listener" : "Welcome back"}</strong>
+            <p>{currentUser ? currentUser.email || "Signed in" : "Ready for a new story?"}</p>
+            {currentUser ? (
+              <button type="button" className="auth-sidebar-link" onClick={() => setActive("Profile")}>View profile</button>
+            ) : (
+              <>
+                <button type="button" className="auth-sidebar-link" onClick={() => openAuth("login")}>Sign in</button>
+                <button type="button" className="auth-sidebar-link" onClick={() => openAuth("signup")}>Create account</button>
+              </>
+            )}
           </div>
-
         </div>
 
       </aside>
@@ -354,7 +363,7 @@ function formatTime(seconds) {
 
             onChange={(e) => setQuery(e.target.value)}
 
-            placeholder="Search audiobooks, authors..."
+            placeholder={active === "Audiobooks" ? "Search audiobooks and authors..." : "Search songs, artists, genres..."}
 
             aria-label="Search audiobooks"
 
@@ -363,6 +372,23 @@ function formatTime(seconds) {
           {query && <button onClick={() => setQuery("")}>Clear</button>}
 
         </div>
+        {query.trim() && active !== "Audiobooks" && suggestedTracks.length > 0 && (
+          <div className="search-suggestions">
+            <p className="eyebrow">SONG SUGGESTIONS</p>
+            {suggestedTracks.map((track) => (
+              <button type="button" className="search-suggestion" key={track.id} onClick={() => {
+                setActive("Music");
+                setSelectedGenre("All");
+                playTrack(track);
+                setQuery("");
+              }}>
+                <img src={track.cover} alt="" />
+                <span><strong>{track.title}</strong><small>{track.artist} · {track.genre}</small></span>
+                <span className="suggestion-play">▶</span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {active === "Home" && (
 
@@ -520,40 +546,12 @@ function formatTime(seconds) {
 
     </div>
 
-    <section className="category-grid">
-
-      {["Pop", "Rock", "Lo-fi", "Classical"].map(
-
-        (genre, i) => (
-
-          <button
-
-            key={genre}
-
-            className={`category category-${i}`}
-
-            onClick={() => {
-
-              setQuery(genre);
-
-              setActive("Search");
-
-            }}
-
-          >
-
-            <span>{["♫", "♬", "☾", "♪"][i]}</span>
-
-            {genre}
-
-            <span className="category-arrow">↗</span>
-
-          </button>
-
-        )
-
-      )}
-
+    <section className="genre-filter" aria-label="Filter music by genre">
+      {genres.map((genre) => (
+        <button type="button" key={genre} className={`genre-chip ${selectedGenre === genre ? "selected" : ""}`} onClick={() => setSelectedGenre(genre)}>
+          {genre === "All" ? "✦" : "♫"} {genre}
+        </button>
+      ))}
     </section>
 
     <div className="section-heading">
@@ -570,7 +568,7 @@ function formatTime(seconds) {
 
 <section className="music-track-list">
 
-  {tracks.map((track) => (
+  {filteredTracks.map((track) => (
 
     <div className="music-track" key={track.id}>
 
@@ -605,8 +603,11 @@ function formatTime(seconds) {
         className="music-play-button"
 
         onClick={() => playTrack(track)}
+
         aria-label={currentTrack.id === track.id && musicPlaying ? `Pause ${track.title}` : `Play ${track.title}`}
+
       >
+
         {currentTrack.id === track.id && musicPlaying ? "Ⅱ" : "▶"}
 
       </button>
@@ -616,6 +617,8 @@ function formatTime(seconds) {
   ))}
 
 </section>
+
+    {filteredTracks.length === 0 && <p className="empty-state">No tracks found for this genre or search. Try another filter.</p>}
 
     <div className="section-heading">
 
@@ -733,6 +736,17 @@ function formatTime(seconds) {
 
             </div>
 
+            <div className="section-heading search-results-heading"><div><p className="eyebrow">MUSIC</p><h2>Matching songs</h2></div></div>
+            <section className="music-track-list">
+              {tracks.filter((track) => `${track.title} ${track.artist} ${track.genre}`.toLowerCase().includes(query.trim().toLowerCase())).map((track) => (
+                <div className="music-track" key={track.id}>
+                  <img className="music-track-cover" src={track.cover} alt={`${track.title} cover`} />
+                  <div className="music-track-info"><h3>{track.title}</h3><p>{track.artist} · {track.duration}</p><span>{track.genre}</span></div>
+                  <button type="button" className="music-play-button" onClick={() => playTrack(track)} aria-label={`Play ${track.title}`}>{currentTrack.id === track.id && musicPlaying ? "Ⅱ" : "▶"}</button>
+                </div>
+              ))}
+            </section>
+            <div className="section-heading search-results-heading"><div><p className="eyebrow">AUDIOBOOKS</p><h2>Matching audiobooks</h2></div></div>
             <section className="book-grid">
 
               {filteredBooks.map((book) => (
@@ -824,220 +838,360 @@ function formatTime(seconds) {
         )}
 
         {active === "Profile" && (
-
           <section className="profile-panel">
-
-            <div className="avatar large">V</div>
-
+            <div className="avatar large">{currentUser ? (currentUser.name || currentUser.email || "A").charAt(0).toUpperCase() : "V"}</div>
             <p className="eyebrow">YOUR ACCOUNT</p>
-
-            <h2>Welcome to AudioVerse</h2>
-
-            <p className="muted">Your listening journey starts here.</p>
-
-            <div className="profile-actions">
-
-              <button
-
-                className="primary-button"
-
-                onClick={() => openAuth("login")}
-
-              >
-
-                Sign in
-
-              </button>
-
-              <button
-
-                className="secondary-button"
-
-                onClick={() => openAuth("signup")}
-
-              >
-
-                Create account
-
-              </button>
-
-            </div>
-
+            {currentUser ? (
+              <>
+                <h2>{currentUser.name || "AudioVerse listener"}</h2>
+                <p className="muted">{currentUser.email || "Email not returned by the server"}</p>
+                <div className="profile-details">
+                  <div><span>Account name</span><strong>{currentUser.name || "Not provided"}</strong></div>
+                  <div><span>Email address</span><strong>{currentUser.email || "Not provided"}</strong></div>
+                </div>
+                <div className="profile-actions">
+                  <button className="secondary-button" onClick={() => { setCurrentUser(null); setActive("Music"); }}>Sign out</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2>Welcome to AudioVerse</h2>
+                <p className="muted">Sign in to view your account details and build your personal music library.</p>
+                <div className="profile-actions">
+                  <button className="primary-button" onClick={() => openAuth("login")}>Sign in</button>
+                  <button className="secondary-button" onClick={() => openAuth("signup")}>Create account</button>
+                </div>
+              </>
+            )}
           </section>
-
         )}
 
       </main>
 
       {/* Audio stays mounted across navigation so track playback works on every page. */}
+
       <audio
+
         ref={audioRef}
+
         src={currentTrack.audioUrl}
+
         preload="metadata"
+
         onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
+
         onEnded={playNextTrack}
+
         onError={() => {
+
           setMusicPlaying(false);
+
           console.error("Audio failed to load:", currentTrack.audioUrl);
+
         }}
+
       />
 
       {/* YouTube Music-style mini player: tap the bar to expand it. */}
+
       <section
+
         className="av-mini-player"
+
         aria-label="Now playing"
+
         onClick={() => setPlayerExpanded(true)}
+
         role="button"
+
         tabIndex={0}
+
         onKeyDown={(event) => {
+
           if (event.key === "Enter" || event.key === " ") {
+
             event.preventDefault();
+
             setPlayerExpanded(true);
+
           }
+
         }}
+
       >
+
         <div className="av-mini-progress-track">
+
           <div
+
             className="av-mini-progress-fill"
+
             style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+
           />
+
         </div>
+
         <img className="av-mini-cover" src={currentTrack.cover} alt={`${currentTrack.title} cover`} />
+
         <div className="av-mini-info">
+
           <strong>{currentTrack.title}</strong>
+
           <span>{currentTrack.artist}</span>
+
         </div>
+
         <button
+
           type="button"
+
           className="av-mini-control"
+
           aria-label={musicPlaying ? "Pause" : "Play"}
+
           onClick={(event) => {
+
             event.stopPropagation();
+
             setMusicPlaying((value) => !value);
+
           }}
+
         >
+
           {musicPlaying ? "Ⅱ" : "▶"}
+
         </button>
+
         <button
+
           type="button"
+
           className="av-mini-control av-mini-next"
+
           aria-label="Next track"
+
           onClick={(event) => {
+
             event.stopPropagation();
+
             playNextTrack();
+
           }}
+
         >
+
           ▶|
+
         </button>
+
         <button
+
           type="button"
+
           className="av-mini-expand"
+
           aria-label="Expand player"
+
           onClick={(event) => {
+
             event.stopPropagation();
+
             setPlayerExpanded(true);
+
           }}
+
         >
+
           ⌃
+
         </button>
+
       </section>
 
       {playerExpanded && (
+
         <div className="av-player-overlay" role="dialog" aria-modal="true" aria-label="Now playing">
+
           <div className="av-expanded-player">
+
             <header className="av-player-header">
+
               <button
+
                 type="button"
+
                 className="av-player-close"
+
                 onClick={() => setPlayerExpanded(false)}
+
                 aria-label="Minimize player"
+
               >
+
                 ⌄
+
               </button>
+
               <div className="av-player-header-copy">
+
                 <span>NOW PLAYING</span>
+
                 <strong>AudioVerse</strong>
+
               </div>
+
               <button
+
                 type="button"
+
                 className="av-player-more"
+
                 onClick={() => setPlayerExpanded(false)}
+
                 aria-label="Close player"
+
               >
+
                 ⋯
+
               </button>
+
             </header>
 
             <div className="av-expanded-art-wrap">
+
               <img className="av-expanded-cover" src={currentTrack.cover} alt={`${currentTrack.title} cover`} />
+
             </div>
 
             <div className="av-expanded-track-details">
+
               <div className="av-expanded-track-copy">
+
                 <h2>{currentTrack.title}</h2>
+
                 <p>{currentTrack.artist}</p>
+
               </div>
+
               <span className="av-track-like" aria-label="Like track">♡</span>
+
             </div>
 
             <div className="av-expanded-seek">
+
               <input
+
                 type="range"
+
                 min="0"
+
                 max={duration || 0}
+
                 value={Math.min(currentTime, duration || 0)}
+
                 onChange={(event) => {
+
                   const nextTime = Number(event.target.value);
+
                   if (audioRef.current) audioRef.current.currentTime = nextTime;
+
                   setCurrentTime(nextTime);
+
                 }}
+
                 aria-label="Seek through track"
+
                 style={{ "--av-seek-progress": `${duration ? (currentTime / duration) * 100 : 0}%` }}
+
               />
+
               <div className="av-time-labels">
+
                 <span>{formatTime(currentTime)}</span>
+
                 <span>-{formatTime(Math.max(0, duration - currentTime))}</span>
+
               </div>
+
             </div>
 
             <div className="av-expanded-controls">
+
               <button type="button" aria-label="Previous track" className="av-skip-control" onClick={playPreviousTrack}>|◀</button>
+
               <button
+
                 type="button"
+
                 aria-label={musicPlaying ? "Pause music" : "Play music"}
+
                 className="av-main-play-control"
+
                 onClick={() => setMusicPlaying((value) => !value)}
+
               >
+
                 {musicPlaying ? "Ⅱ" : "▶"}
+
               </button>
+
               <button type="button" aria-label="Next track" className="av-skip-control" onClick={playNextTrack}>▶|</button>
+
             </div>
 
             <div className="av-up-next">
+
               <div className="av-up-next-heading">
+
                 <strong>Up next</strong>
+
                 <span>{tracks.length} tracks</span>
+
               </div>
+
               {tracks.map((track) => (
+
                 <button
+
                   type="button"
+
                   key={track.id}
+
                   className={`av-queue-track ${currentTrack.id === track.id ? "is-current" : ""}`}
+
                   onClick={() => playTrack(track)}
+
                 >
+
                   <img src={track.cover} alt="" />
+
                   <span className="av-queue-copy">
+
                     <strong>{track.title}</strong>
+
                     <small>{track.artist}</small>
+
                   </span>
+
                   <span className="av-queue-duration">{track.duration}</span>
+
                   {currentTrack.id === track.id && <span className="av-queue-playing">♫</span>}
+
                 </button>
+
               ))}
+
             </div>
+
           </div>
+
         </div>
+
       )}
 
       <footer className="mobile-nav">
@@ -1135,6 +1289,7 @@ function formatTime(seconds) {
           mode={authMode}
 
           setMode={setAuthMode}
+          onLoginSuccess={(user) => setCurrentUser(user)}
 
         onClose={() => {
 
@@ -1218,7 +1373,7 @@ function BookCard({ book, onClick }) {
 
 }
 
-function AuthScreen({ mode, setMode, onClose }) {
+function AuthScreen({ mode, setMode, onClose, onLoginSuccess }) {
 
   const [name, setName] = useState("");
 
@@ -1314,7 +1469,7 @@ function AuthScreen({ mode, setMode, onClose }) {
 
     const response = await fetch(
 
-      "http\://localhost:8080/api/users/login",
+      "http://localhost:8080/api/users/login",
 
       {
 
@@ -1350,9 +1505,15 @@ function AuthScreen({ mode, setMode, onClose }) {
 
     }
 
-   setMessageType("success");
-
-setMessage(`Welcome back, ${result.name}!`);
+   const userPayload = result.user || result;
+const loggedInUser = {
+  id: userPayload.id ?? userPayload.userId ?? null,
+  name: userPayload.name || userPayload.fullName || userPayload.username || "AudioVerse listener",
+  email: userPayload.email || normalizedEmail,
+};
+onLoginSuccess?.(loggedInUser);
+setMessageType("success");
+setMessage(`Welcome back, ${loggedInUser.name}!`);
 
 setTimeout(() => {
 
@@ -1386,7 +1547,7 @@ console.log("Logged-in user:", result);
 
     try {
 
-      const response = await fetch("http\://localhost:8080/api/users", {
+      const response = await fetch("http://localhost:8080/api/users", {
 
         method: "POST",
 
