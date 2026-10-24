@@ -22,7 +22,7 @@ const books = [
 
 ];
 
-const tracks = [
+const alltracks = [
 
   {
 
@@ -143,6 +143,35 @@ const tracks = [
   { id: 47, title: "Night Changes", artist: "One Direction", genre: "Pop", duration: "—", cover: null, audioUrl: null },
   { id: 48, title: "Faded", artist: "Alan Walker", genre: "EDM", duration: "—", cover: null, audioUrl: null },
 ];
+
+const getTrackKey = (track) =>
+  `${track.title.trim().toLowerCase()}::${track.artist
+    .trim()
+    .toLowerCase()}`;
+
+const seenTrackKeys = new Set();
+
+const uniqueTracks = alltracks.filter((track) => {
+  const key = getTrackKey(track);
+
+  if (seenTrackKeys.has(key)) {
+    return false;
+  }
+
+  seenTrackKeys.add(key);
+  return true;
+});
+
+if (uniqueTracks.length !== alltracks.length) {
+  console.warn(
+    `AudioVerse: Removed ${
+      alltracks.length - uniqueTracks.length
+    } duplicate song(s).`
+  );
+}
+
+const tracks = uniqueTracks;
+
 
 const navItems = [
 
